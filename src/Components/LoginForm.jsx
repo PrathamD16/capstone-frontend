@@ -1,10 +1,13 @@
-import { TextField } from '@mui/material'
-import React, { useState } from 'react'
+import { TextField, Switch } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid2'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { purple } from '@mui/material/colors';
 import Bg1 from '../Images/bg-1.png'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { fetchUserData, signIn } from '../Redux/Slices/UserSlices'
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 
 const theme = createTheme({
     palette: {
@@ -16,11 +19,34 @@ const theme = createTheme({
 
 
 const LoginForm = () => {
-    const [username, setUserName] = useState("")
-    const [password, setPassword] = useState("")
+    const [UserEmail, setUserEmail] = useState("")
+    const [UserPassword, setPassword] = useState("")
+    const [isDoctor, setIsDoctor] = useState(false)
+    const {email, password} = useSelector(state => state.user)
+    const nav = useNavigate()
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        // console.log(user)
+    }, [])
 
     const submitHandler = (e) => {
+        e.preventDefault()
+        const cred = {
+            UserEmail, UserPassword, isDoctor
+        }
 
+        dispatch(fetchUserData(1))
+
+        setTimeout(() => {
+            if(email === UserEmail && password === UserPassword){
+                nav('/patient-dashboard')
+            }
+            else{
+                console.log("Failed to sign in")
+            }
+        }, 500)
     }
 
     return (
@@ -29,10 +55,13 @@ const LoginForm = () => {
                 <div className='mx-[5vh] px-5'>
                     <form onSubmit={submitHandler} className='space-y-3'>
                         <ThemeProvider theme={theme}>
+                            <div className='flex items-center'>
+                                <p className='font-semibold'>Are you a doctor ?</p><Switch onChange={e => setIsDoctor(!isDoctor)} />
+                            </div>
                             <div>
                                 <span className='font-semibold'>Email</span>
                                 <div className='flex'>
-                                    <TextField required onChange={e => setUserName(e.target.value)} className='flex-1 shadow-md border-none' placeholder='Enter your email' type='email' />
+                                    <TextField required onChange={e => setUserEmail(e.target.value)} className='flex-1 shadow-md border-none' placeholder='Enter your email' type='email' />
                                 </div>
                             </div>
                             <div>
