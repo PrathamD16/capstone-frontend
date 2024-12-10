@@ -1,7 +1,8 @@
 import { Autocomplete, TextField, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react'
-import { createTheme , ThemeProvider,  } from '@mui/material/styles';
+import { createTheme, ThemeProvider, } from '@mui/material/styles';
 import { purple } from '@mui/material/colors';
+import axios from 'axios';
 
 const theme = createTheme({
     palette: {
@@ -15,8 +16,13 @@ const AppointmentBooking = ({ did, cost, pid }) => {
 
     useEffect(() => {
         const today = new Date().toISOString().split("T")[0];
-        setMinDate(today);
-        setList(['10:00', '11:00', '12:00', '13:00', '14:00', '15:00'])
+        setDate(today)
+        const fetchSlots = async () => {
+            const res = await axios.get(`http://localhost:8080/api/appointments/slots?doctorId=${did}&date=${date}`)
+            console.log(res.data)
+            setList(res.data)
+        }
+        fetchSlots()
     }, [])
 
     const [list, setList] = useState([])
@@ -57,7 +63,7 @@ const AppointmentBooking = ({ did, cost, pid }) => {
                                         setSlot(newVal)
                                     }}
                                     sx={{ width: 300 }}
-                                    renderInput={(params) => <TextField {...params} className='border-none'/>}
+                                    renderInput={(params) => <TextField {...params} className='border-none' />}
                                 />
                             </div>
                         </Tooltip>

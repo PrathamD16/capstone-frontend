@@ -24,15 +24,16 @@ const DoctorInfoTile = ({ doctor }) => {
     <div className='shadow-md rounded-lg py-[5vh] bg-gray-100 hover:scale-[102%] transition-all duration-300 hover:bg-gray-200 mx-5 px-10'>
       <Grid container className="flex items-center" spacing={8}>
         <Grid flex={4}>
-          <img className='rounded-full' src="" alt="Profile Pic" />
+          <img className='rounded-full' src={""} alt="Profile Pic" />
         </Grid>
         <Grid flex={4}>
           <p className='text-2xl text-blue-900 font-semibold'>{doctor.name}</p>
-          <p>{doctor.speciality}</p>
+          <p className='font-normal'>{doctor.specialty}</p>
           <div className=''>
             <p ><span className='font-semibold'>{doctor.experience}+</span> years of experience</p>
             <p className='text-sm font-semibold'>{doctor.location}</p>
-            <p className='font-semibold'>{doctor?.cost == null ? '600$ Consultancy Fee' : ''}</p>
+            {/* <p className='font-semibold'>{doctor.cost == null ? '600$ Consultancy Fee' : ''}</p> */}
+            <p className='font-semibold'>Consultancy Fee {doctor.cost}$</p>
           </div>
         </Grid>
         <Grid flex={4} className="">

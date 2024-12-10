@@ -7,6 +7,7 @@ import Bg1 from '../Images/bg-1.png'
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchUserData, signIn } from '../Redux/Slices/UserSlices'
 import { useDispatch, useSelector } from 'react-redux';
+import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 
 const theme = createTheme({
@@ -19,10 +20,11 @@ const theme = createTheme({
 
 
 const LoginForm = () => {
+    const [loading, setLoading] = useState(false)
     const [UserEmail, setUserEmail] = useState("")
     const [UserPassword, setPassword] = useState("")
     const [isDoctor, setIsDoctor] = useState(false)
-    const {email, password} = useSelector(state => state.user)
+    // const { email, password } = useSelector(state => state.user)
     const nav = useNavigate()
 
     const dispatch = useDispatch()
@@ -32,25 +34,47 @@ const LoginForm = () => {
     }, [])
 
     const submitHandler = (e) => {
+        // Fetch the data, and then set the sessions
         e.preventDefault()
-        const cred = {
-            UserEmail, UserPassword, isDoctor
+
+        const loginDto = {
+            email: UserEmail,
+            password: UserPassword,
+            isDoctor
         }
 
-        dispatch(fetchUserData(1))
+        // setLoading(!loading)
+        axios.post(`http://localhost:8080/api/login/signIn`, loginDto)
+            .then(res => {
+                // setLoading(!loading)
+                const cred = {                
+                    email: res.data.email,
+                    name: res.data.name,
+                    id: res.data.id,
+                };
+                // console.log(cred)
+                dispatch(signIn(cred))
+                nav("/patient-dashboard")
+            })
+            .catch(err => {
+                // setLoading(!loading)
+                console.log(err)
+                console.log(`Invalid credential`)
+            })
 
-        setTimeout(() => {
-            if(email === UserEmail && password === UserPassword){
-                nav('/patient-dashboard')
-            }
-            else{
-                console.log("Failed to sign in")
-            }
-        }, 500)
+
+
+
     }
 
     return (
         <Grid container spacing={2} className="flex items-center">
+            {loading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75 backdrop-blur-md">
+                    <CircularProgress color="inherit" />
+                    <p className="mx-2">Please wait...</p>
+                </div>
+            )}
             <Grid className='bg-gray-100' flex={4}>
                 <div className='mx-[5vh] px-5'>
                     <form onSubmit={submitHandler} className='space-y-3'>
@@ -77,7 +101,7 @@ const LoginForm = () => {
                         <div>
                             <p className='font-semibold text-blue-800 hover:cursor-pointer hover:underline'>Forgot Password</p>
                         </div>
-                        <Link to={`/patientSignUp`}>
+                        <Link to={`/signup`}>
                             <p className='font-semibold textt-sm text-blue-700 hover:underline hover:cursor-pointer my-1'>Not having account ? <span className=''>Sign up</span></p>
                         </Link>
                     </form>

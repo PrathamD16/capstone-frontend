@@ -27,6 +27,7 @@ const themeBlue = createTheme({
 
 const PatientDashboard = () => {
 
+
   const [docData, setDocData] = useState([])
   const [filterData, setFilterData] = useState([])
   const [location, setLocation] = useState("")
@@ -38,7 +39,7 @@ const PatientDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/doctors`)
+        const res = await axios.get(`http://localhost:8080/api/doctors`)
         setDocData(res.data)
       } catch (err) {
         console.log("Error", err)
@@ -46,7 +47,7 @@ const PatientDashboard = () => {
     }
     fetchData()
     console.log(user)
-    setList(["Endocrinology", "Gastroenterology", "Dentist", "Psychiatry"])
+    setList(["Endocrinology", "Gastroenterology", "Dentist", "Psychiatry", "Radiology"])
   }, [])
 
 
@@ -55,8 +56,8 @@ const PatientDashboard = () => {
   useEffect(() => {
     const filtered = docData.filter(doc => {
       const matchLocation = location ? doc.location.toLowerCase().includes(location.toLowerCase()) : true;
-      const speciality = special ? doc.speciality.toLowerCase().includes(special.toLowerCase()) : true
-      return matchLocation && speciality
+      const specialty = special ? doc.specialty.toLowerCase().includes(special.toLowerCase()) : true
+      return matchLocation && specialty
     });
     setFilterData(filtered)
   }, [location, date, special])
